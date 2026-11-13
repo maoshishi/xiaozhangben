@@ -1,0 +1,38 @@
+{
+  "name": "小账本 · 记账",
+  "short_name": "小账本",
+  "description": "简洁的本地记账本，支持智能记账与周/月/年报表",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "zh-CN",
+  "background_color": "#f6f5fc",
+  "theme_color": "#f6f5fc",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["finance", "productivity"]
+}

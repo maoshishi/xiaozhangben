@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#F6F5FC" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="小账本" />
+<title>小账本</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <main id="pages">
+
+    <!-- ================= 记账 ================= -->
+    <section class="page active" data-page="ledger">
+      <header class="page-head">
+        <div>
+          <h1 class="page-title">记账</h1>
+          <p class="page-sub" id="pageSub">本月还没有记录</p>
+        </div>
+        <div class="head-actions">
+          <button class="icon-btn" id="btnSearch" aria-label="搜索">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.6 16.6 21 21"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="month-bar">
+        <button class="mbtn" id="prevMonth" aria-label="上个月">‹</button>
+        <button class="mlabel" id="monthLabel" aria-label="选择月份">
+          <span id="monthLabelText">2026年11月</span>
+          <svg class="mlabel-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg>
+        </button>
+        <button class="mbtn" id="nextMonth" aria-label="下个月">›</button>
+      </div>
+
+      <div class="summary">
+        <div class="sum">
+          <span class="sum-k">今日支出</span>
+          <span class="sum-v" id="sumToday">¥0.00</span>
+        </div>
+        <div class="sum">
+          <span class="sum-k">本月支出</span>
+          <span class="sum-v exp" id="sumMonthExp">¥0.00</span>
+        </div>
+        <div class="sum">
+          <span class="sum-k">本月收入</span>
+          <span class="sum-v inc" id="sumMonthInc">¥0.00</span>
+        </div>
+      </div>
+
+      <div id="dayList" class="day-list"></div>
+
+      <button class="ai-fab" id="btnAi" aria-label="智能记账">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+          <rect x="4" y="7.5" width="16" height="12" rx="4.2"/>
+          <circle cx="9.4" cy="13.5" r="1.25" fill="currentColor" stroke="none"/>
+          <circle cx="14.6" cy="13.5" r="1.25" fill="currentColor" stroke="none"/>
+          <path d="M12 3.2v3.6"/>
+          <path d="M2.2 12.2v2.6M21.8 12.2v2.6"/>
+        </svg>
+        <i></i>
+      </button>
+    </section>
+
+    <!-- ================= 报表 ================= -->
+    <section class="page" data-page="report">
+      <header class="page-head">
+        <div>
+          <h1 class="page-title">报表</h1>
+          <p class="page-sub" id="reportSub">看清钱都去了哪里</p>
+        </div>
+      </header>
+
+      <div class="rep-tabs" id="repMode">
+        <button class="rep-tab active" data-mode="week">周报</button>
+        <button class="rep-tab" data-mode="month">月报</button>
+        <button class="rep-tab" data-mode="year">年报</button>
+      </div>
+
+      <div class="rep-bar">
+        <div class="rep-seg" id="repType">
+          <button class="rep-seg-btn active" data-type="expense">支出</button>
+          <button class="rep-seg-btn" data-type="income">收入</button>
+        </div>
+        <div class="rep-period">
+          <button class="rep-nav" id="repPrev" aria-label="上一期">‹</button>
+          <button class="rep-plabel" id="repLabel">—</button>
+          <button class="rep-nav" id="repNext" aria-label="下一期">›</button>
+        </div>
+      </div>
+
+      <div class="rep-summary" id="repSummary"></div>
+
+      <div class="card rep-card">
+        <div class="rep-card-head">
+          <div class="card-title" id="lineTitle">每日支出</div>
+          <div class="rep-card-side" id="lineSide"></div>
+        </div>
+        <div class="chart-wrap" id="lineWrap"></div>
+        <div class="chart-hint" id="lineHint">点折线上的点，看具体金额</div>
+      </div>
+
+      <div class="card rep-card">
+        <div class="rep-card-head">
+          <div class="card-title">分类占比</div>
+          <div class="rep-card-side">点中间看总额</div>
+        </div>
+        <div class="donut-box" id="donutWrap"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div class="card rep-card">
+        <div class="rep-card-head">
+          <div class="card-title" id="barTitle">近 5 期对比</div>
+          <div class="rep-card-side" id="barSide">可滑动</div>
+        </div>
+        <div class="bar-scroll" id="barScroll"></div>
+        <div class="rank-head">
+          <span id="rankHead">分类排行</span>
+          <span id="rankMeta"></span>
+        </div>
+        <div class="rank-list" id="rankList"></div>
+      </div>
+
+      <div class="bottom-space"></div>
+    </section>
+
+    <!-- ================= 发现 ================= -->
+    <section class="page" data-page="discover">
+      <header class="page-head">
+        <div>
+          <h1 class="page-title">发现</h1>
+          <p class="page-sub">数据都在你自己的手机里</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <div class="card-title">数据管理</div>
+        <button class="row-btn" id="btnExport">
+          <span class="row-ic purple">
+            <svg viewBox="0 0 24 24"><path d="M12 3.5v11.5M8 11l4 4 4-4"/><path d="M4.5 19h15"/></svg>
+          </span>
+          <span class="row-txt"><b>导出备份</b><i>保存为 JSON 文件，换手机不丢账</i></span>
+          <span class="row-arrow">›</span>
+        </button>
+        <button class="row-btn" id="btnImport">
+          <span class="row-ic blue">
+            <svg viewBox="0 0 24 24"><path d="M12 15V3.5M8 7l4-4 4 4"/><path d="M4.5 19h15"/></svg>
+          </span>
+          <span class="row-txt"><b>导入数据</b><i>从备份文件恢复（会合并去重）</i></span>
+          <span class="row-arrow">›</span>
+        </button>
+        <button class="row-btn" id="btnSample">
+          <span class="row-ic mint">
+            <svg viewBox="0 0 24 24"><path d="M12 3l2.3 5.6L20 11l-5.7 2.4L12 19l-2.3-5.6L4 11l5.7-2.4z"/></svg>
+          </span>
+          <span class="row-txt"><b>载入示例数据</b><i>先看看有数据时是什么样子</i></span>
+          <span class="row-arrow">›</span>
+        </button>
+        <button class="row-btn danger" id="btnClear">
+          <span class="row-ic rose">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M6.5 7l1 12.5h9L17.5 7"/></svg>
+          </span>
+          <span class="row-txt"><b>清空全部账单</b><i>不可恢复，请先导出备份</i></span>
+          <span class="row-arrow">›</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">智能记账能力</div>
+        <p class="card-note">默认使用内置的中文规则解析，完全离线。<br/>规则的覆盖范围：金额（含"十二块五"这类中文数字）、收支方向、日期（今天/昨天/前天）、以及 18 个支出分类和 8 个收入分类。</p>
+        <button class="row-btn" id="btnGoSettings">
+          <span class="row-ic purple">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5"/></svg>
+          </span>
+          <span class="row-txt"><b>配置大模型接口</b><i>可选，装上后解析更聪明</i></span>
+          <span class="row-arrow">›</span>
+        </button>
+      </div>
+      <div class="bottom-space"></div>
+    </section>
+
+    <!-- ================= 设置 ================= -->
+    <section class="page" data-page="settings">
+      <header class="page-head">
+        <div>
+          <h1 class="page-title">设置</h1>
+          <p class="page-sub" id="settingsSub">共 0 笔记录</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <div class="card-title">大模型解析（可选）</div>
+        <p class="card-note">填好后，"智能记账"会优先调用大模型解析，失败自动回退到本地规则。接口需兼容 OpenAI 的 <code>/chat/completions</code> 格式。</p>
+        <label class="field">
+          <span>接口地址</span>
+          <input id="aiEndpoint" type="url" placeholder="https://api.openai.com/v1" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>模型名称</span>
+          <input id="aiModel" type="text" placeholder="gpt-4o-mini" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>API Key</span>
+          <input id="aiKey" type="password" placeholder="sk-..." autocomplete="off" />
+        </label>
+        <button class="btn-primary wide" id="btnSaveAi">保存配置</button>
+        <p class="card-note tiny">Key 只保存在本机浏览器里，不会上传到别处。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">关于</div>
+        <p class="card-note">小账本 v1.0 · 纯本地记账<br/>数据存在本机 localStorage，清除浏览器数据会一起消失，记得定期导出备份。</p>
+      </div>
+      <div class="bottom-space"></div>
+    </section>
+
+  </main>
+
+  <!-- ================= 底部导航 ================= -->
+  <nav class="tabbar">
+    <button class="tab-item active" data-tab="ledger">
+      <span class="tab-ic">
+        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3.2"/><path d="M3 10.5h18"/><circle cx="16.6" cy="14.8" r="1.15" fill="currentColor" stroke="none"/></svg>
+      </span>
+      <span class="tab-tx">记账</span>
+    </button>
+    <button class="tab-item" data-tab="report">
+      <span class="tab-ic">
+        <svg viewBox="0 0 24 24"><rect x="4" y="12" width="4" height="8" rx="1.6"/><rect x="10" y="6" width="4" height="14" rx="1.6"/><rect x="16" y="15" width="4" height="5" rx="1.6"/></svg>
+      </span>
+      <span class="tab-tx">报表</span>
+    </button>
+    <button class="tab-add" id="btnAdd">
+      <span class="add-circle">
+        <svg viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
+      </span>
+      <span class="tab-tx">记一笔</span>
+    </button>
+    <button class="tab-item" data-tab="discover">
+      <span class="tab-ic">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M15.4 8.6l-1.9 4.9-4.9 1.9 1.9-4.9z"/></svg>
+      </span>
+      <span class="tab-tx">发现</span>
+    </button>
+    <button class="tab-item" data-tab="settings">
+      <span class="tab-ic">
+        <svg viewBox="0 0 24 24"><path d="M4 7.5h9M17.5 7.5H20M4 16.5h4M12.5 16.5H20"/><circle cx="15" cy="7.5" r="2.3"/><circle cx="10" cy="16.5" r="2.3"/></svg>
+      </span>
+      <span class="tab-tx">设置</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ================= 记一笔 ================= -->
+<div class="sheet" id="entrySheet" aria-hidden="true">
+  <div class="sheet-backdrop" data-close="entrySheet"></div>
+  <div class="sheet-panel entry-panel">
+    <div class="entry-head">
+      <div class="seg" id="typeSeg">
+        <button class="seg-btn active" data-type="expense">支出</button>
+        <button class="seg-btn" data-type="income">收入</button>
+      </div>
+      <div class="entry-head-right">
+        <button class="pill" id="datePill">
+          <span id="datePillText">今天</span>
+          <svg viewBox="0 0 24 24" class="pill-arrow"><path d="M7 10l5 5 5-5"/></svg>
+        </button>
+        <button class="pill" id="timePill">
+          <span id="timePillText">12:00</span>
+          <svg viewBox="0 0 24 24" class="pill-arrow"><path d="M7 10l5 5 5-5"/></svg>
+        </button>
+      </div>
+      <button class="icon-btn sheet-close" data-close="entrySheet" aria-label="关闭">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="amount-wrap">
+      <div class="amount-line">
+        <span class="cur">¥</span>
+        <span class="amount" id="amountText">0</span>
+        <span class="caret"></span>
+        <span class="expr" id="exprText"></span>
+      </div>
+      <div class="amount-rule"></div>
+    </div>
+
+    <div class="cat-scroll">
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <div class="note-row">
+      <input id="noteInput" type="text" placeholder="点击填写备注" maxlength="40" />
+      <button class="note-cam" id="noteCam" aria-label="拍照" title="备注里写地点，例如：食堂">
+        <svg viewBox="0 0 24 24"><path d="M4 8.5h3l1.4-2h7.2L19 8.5h1.5a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-16A1.5 1.5 0 0 1 3 18v-8A1.5 1.5 0 0 1 4.5 8.5z"/><circle cx="12" cy="13.5" r="3.2"/></svg>
+      </button>
+    </div>
+
+    <div class="keypad" id="keypad">
+      <button class="key" data-k="7">7</button>
+      <button class="key" data-k="8">8</button>
+      <button class="key" data-k="9">9</button>
+      <button class="key fn" data-k="back" aria-label="删除">
+        <svg viewBox="0 0 24 24"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9L3 12z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/></svg>
+      </button>
+      <button class="key" data-k="4">4</button>
+      <button class="key" data-k="5">5</button>
+      <button class="key" data-k="6">6</button>
+      <button class="key fn" data-k="sub" aria-label="减">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+      </button>
+      <button class="key" data-k="1">1</button>
+      <button class="key" data-k="2">2</button>
+      <button class="key" data-k="3">3</button>
+      <button class="key fn" data-k="add" aria-label="加">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <button class="key minor" data-k="again">再记一笔</button>
+      <button class="key" data-k="0">0</button>
+      <button class="key" data-k=".">.</button>
+      <button class="key save" data-k="save">保存</button>
+    </div>
+
+    <input type="date" id="dateInput" class="native-input" />
+    <input type="time" id="timeInput" class="native-input" />
+  </div>
+</div>
+
+<!-- ================= 智能记账 ================= -->
+<div class="sheet" id="aiSheet" aria-hidden="true">
+  <div class="sheet-backdrop" data-close="aiSheet"></div>
+  <div class="sheet-panel ai-panel">
+    <div class="sheet-head">
+      <div class="ai-title">
+        <span class="ai-dot">
+          <svg viewBox="0 0 24 24"><rect x="4" y="7.5" width="16" height="12" rx="4.2"/><circle cx="9.4" cy="13.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.6" cy="13.5" r="1.2" fill="currentColor" stroke="none"/><path d="M12 3.2v3.6"/></svg>
+        </span>
+        <b>智能记账</b>
+      </div>
+      <button class="icon-btn sheet-close" data-close="aiSheet" aria-label="关闭">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="ai-body">
+      <div class="ai-input-box">
+        <textarea id="aiText" rows="2" placeholder="说一句话，比如：午饭花了12块5"></textarea>
+        <button class="ai-parse-btn" id="btnParse">解析</button>
+      </div>
+      <div class="ai-chips" id="aiChips">
+        <button class="chip">昨天打车 23</button>
+        <button class="chip">买菜 45.5</button>
+        <button class="chip">发工资 8000</button>
+        <button class="chip">奶茶 12</button>
+        <button class="chip">收到红包 200</button>
+      </div>
+
+      <div class="ai-result" id="aiResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 搜索 ================= -->
+<div class="sheet" id="searchSheet" aria-hidden="true">
+  <div class="sheet-backdrop" data-close="searchSheet"></div>
+  <div class="sheet-panel search-panel">
+    <div class="search-head">
+      <svg viewBox="0 0 24 24" class="search-ic"><circle cx="11" cy="11" r="7"/><path d="M16.6 16.6 21 21"/></svg>
+      <input id="searchInput" type="search" placeholder="搜索备注或分类" />
+      <button class="text-btn" data-close="searchSheet">取消</button>
+    </div>
+    <div id="searchResults" class="search-results"></div>
+  </div>
+</div>
+
+<!-- ================= 记录操作 ================= -->
+<div class="sheet" id="actionSheet" aria-hidden="true">
+  <div class="sheet-backdrop" data-close="actionSheet"></div>
+  <div class="sheet-panel action-panel">
+    <div class="action-info" id="actionInfo"></div>
+    <button class="action-btn" id="btnEditRecord">
+      <svg viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16z"/><path d="M14 5l4 4"/></svg>
+      编辑
+    </button>
+    <button class="action-btn danger" id="btnDeleteRecord">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/><path d="M6.5 7l1 12.5h9L17.5 7"/></svg>
+      删除
+    </button>
+    <button class="action-btn" data-close="actionSheet">取消</button>
+  </div>
+</div>
+
+<!-- ================= 确认弹窗 ================= -->
+<div class="modal" id="confirmModal" aria-hidden="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-card">
+    <h3 id="confirmTitle">提示</h3>
+    <p id="confirmText"></p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="confirmCancel">取消</button>
+      <button class="btn-primary" id="confirmOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ================= 月份选择 ================= -->
+<div class="modal picker-modal" id="monthPicker" aria-hidden="true">
+  <div class="modal-backdrop" id="pickerBackdrop"></div>
+  <div class="picker-card">
+    <div class="picker-head">
+      <button class="picker-year-btn" id="pickerPrevYear" aria-label="上一年">
+        <svg viewBox="0 0 24 24"><path d="M14.5 6.5 9 12l5.5 5.5"/></svg>
+      </button>
+      <div class="picker-year" id="pickerYear">2026年</div>
+      <button class="picker-year-btn" id="pickerNextYear" aria-label="下一年">
+        <svg viewBox="0 0 24 24"><path d="M9.5 6.5 15 12l-5.5 5.5"/></svg>
+      </button>
+    </div>
+    <div class="picker-grid" id="pickerMonths"></div>
+    <div class="picker-foot">
+      <button class="picker-this" id="pickerThisMonth">回到本月</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="application/json,.json" class="native-input" />
+
+<script src="js/icons.js"></script>
+<script src="js/store.js"></script>
+<script src="js/parse.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/ledger.js"></script>
+<script src="js/entry.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/report.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
