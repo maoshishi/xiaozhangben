@@ -400,6 +400,37 @@
   </div>
 </div>
 
+<!-- ================= 添加分类 ================= -->
+<div class="sheet" id="catSheet" aria-hidden="true">
+  <div class="sheet-backdrop" data-close="catSheet"></div>
+  <div class="sheet-panel cat-panel">
+    <div class="cat-panel-head">
+      <h2 id="catSheetTitle">添加主分类</h2>
+      <button class="icon-btn sheet-close" data-close="catSheet" aria-label="关闭">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="cat-form">
+      <div class="cat-name-row">
+        <span class="cat-label">分类名称</span>
+        <input id="catName" maxlength="4" placeholder="不能与已有分类名重复" autocomplete="off" />
+        <span class="cat-count" id="catCount">0/4</span>
+      </div>
+      <div class="cat-rule"></div>
+      <div class="cat-icon-head">
+        <span class="cat-label">分类图标</span>
+        <span class="cat-sub">请点击选择下方图标</span>
+      </div>
+      <div class="cat-icon-scroll">
+        <div class="cat-icon-grid" id="catIconGrid"></div>
+      </div>
+    </div>
+
+    <button class="btn-primary cat-ok" id="catConfirm" disabled>确认</button>
+  </div>
+</div>
+
 <!-- ================= 确认弹窗 ================= -->
 <div class="modal" id="confirmModal" aria-hidden="true">
   <div class="modal-backdrop"></div>
@@ -443,6 +474,7 @@
 <script src="js/ui.js"></script>
 <script src="js/ledger.js"></script>
 <script src="js/entry.js"></script>
+<script src="js/cat.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/report.js"></script>
 <script src="js/app.js"></script>
