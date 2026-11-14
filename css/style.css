@@ -1014,16 +1014,16 @@ svg {
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px 4px;
+  gap: 8px 4px;
 }
 
 .cat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 4px 0;
-  border-radius: 14px;
+  gap: 7px;
+  padding: 5px 0;
+  border-radius: 16px;
   transition: background 0.15s ease;
 }
 
@@ -1032,31 +1032,45 @@ svg {
 }
 
 .cat-item .cat-ic {
-  width: 44px;
-  height: 44px;
-  border-radius: 15px;
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  width: 50px;
+  height: 50px;
+  border-radius: 17px;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.3, 1.2), box-shadow 0.18s ease,
+    background 0.18s ease, color 0.18s ease;
 }
 
 .cat-item .cat-ic svg {
-  width: 23px;
-  height: 23px;
+  width: 26px;
+  height: 26px;
 }
 
 .cat-name {
   font-size: 11px;
   color: var(--ink-2);
   white-space: nowrap;
+  transition: color 0.18s ease, background 0.18s ease;
 }
 
+/* 选中：整块渐变填充 + 白色图标，对比拉满 */
 .cat-item.selected .cat-ic {
-  transform: translateY(-1px) scale(1.04);
-  box-shadow: 0 6px 14px rgba(140, 122, 232, 0.22);
+  background: linear-gradient(140deg, #9a88ef 0%, #86c6f0 100%) !important;
+  color: #fff !important;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 9px 20px rgba(118, 100, 210, 0.42), 0 0 0 3px rgba(169, 154, 243, 0.16);
+}
+
+.cat-item.selected .cat-ic svg {
+  stroke-width: 2;
 }
 
 .cat-item.selected .cat-name {
-  color: var(--purple-deep);
-  font-weight: 600;
+  padding: 1px 9px;
+  margin: -1px -9px;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 650;
+  background: linear-gradient(140deg, #9a88ef 0%, #86c6f0 100%);
+  box-shadow: 0 4px 10px rgba(118, 100, 210, 0.26);
 }
 
 .cat-item.add .cat-ic {
@@ -1411,6 +1425,35 @@ svg {
 
 .ai-actions .btn-primary {
   flex: 1;
+}
+
+/* 没认出分类时的提醒：深紫，显眼一点 */
+.ai-warn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: #efe9ff;
+  color: #5b3fc4;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.ai-warn-ic {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #5b3fc4;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-style: normal;
 }
 
 .ai-hint {
@@ -2244,7 +2287,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 6px 2px;
+  padding: 7px 2px;
 }
 
 .rank-idx {
@@ -2255,14 +2298,14 @@ svg {
 }
 
 .rank-row .cat-ic {
-  width: 28px;
-  height: 28px;
-  border-radius: 9px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
 }
 
 .rank-row .cat-ic svg {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
 }
 
 .rank-mid {
@@ -2270,31 +2313,27 @@ svg {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .rank-name {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--ink-2);
-}
-
-.rank-bar {
-  display: block;
-  height: 4px;
-  border-radius: 3px;
-  background: #f6f4fd;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.rank-bar i {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.3s ease;
+.rank-sub {
+  font-size: 10.5px;
+  color: var(--muted-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rank-amt {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -2309,7 +2348,11 @@ svg {
     font-size: 32px;
   }
   .cat-item .cat-ic {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
+  }
+  .cat-item .cat-ic svg {
+    width: 24px;
+    height: 24px;
   }
 }

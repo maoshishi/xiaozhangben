@@ -477,24 +477,35 @@
       .join('');
   }
 
-  /* ---------------- 排行 ---------------- */
-  function paintRank(items, total) {
-    elRankMeta.textContent = total > 0 ? '合计 ' + UI.money(total) : '';
-    if (!items.length) {
+  /* ---------------- 排行（单笔账单） ---------------- */
+  function paintRank(recs) {
+    elRankMeta.textContent = recs.length ? '共 ' + recs.length + ' 笔' : '';
+    if (!recs.length) {
       elRankList.innerHTML = '<div class="chart-empty small">暂无数据</div>';
       return;
     }
-    var max = items[0].amount || 1;
-    elRankList.innerHTML = items
-      .slice(0, 10)
-      .map(function (it, i) {
+    var top = recs
+      .slice()
+      .sort(function (a, b) {
+        return b.amount - a.amount || (b.date + b.time).localeCompare(a.date + a.time);
+      })
+      .slice(0, 10);
+
+    elRankList.innerHTML = top
+      .map(function (r, i) {
+        var c = Icons.get(r.cat);
+        var note = (r.note || '').trim();
+        var title = note || c.name;
+        var sub = UI.dateLabel(r.date) + (note ? ' · ' + c.name : '');
         return (
           '<div class="rank-row">' +
           '<span class="rank-idx">' + (i + 1) + '</span>' +
-          Icons.chip(it.cat) +
-          '<span class="rank-mid"><span class="rank-name">' + esc(it.name) + '</span>' +
-          '<span class="rank-bar"><i style="width:' + ((it.amount / max) * 100).toFixed(1) + '%;background:' + it.color + '"></i></span></span>' +
-          '<span class="rank-amt">' + UI.num(it.amount) + '</span>' +
+          Icons.chip(r.cat) +
+          '<span class="rank-mid">' +
+          '<span class="rank-name">' + esc(title) + '</span>' +
+          '<span class="rank-sub">' + esc(sub) + '</span>' +
+          '</span>' +
+          '<span class="rank-amt">' + UI.num(r.amount) + '</span>' +
           '</div>'
         );
       })
@@ -582,11 +593,11 @@
 
     elBarTitle.textContent =
       '近 5 ' + (state.mode === 'week' ? '周' : state.mode === 'month' ? '个月' : '年') + typeName + '对比';
-    elBarSide.textContent = '点柱子看排行';
+    elBarSide.textContent = '点柱子看单笔';
 
     /* 排行 */
-    elRankHead.textContent = p.label + ' · ' + typeName + '排行';
-    paintRank(items, total);
+    elRankHead.textContent = p.label + ' · 单笔排行';
+    paintRank(recs);
   }
 
   function byCategory(recs) {

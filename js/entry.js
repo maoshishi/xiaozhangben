@@ -142,16 +142,20 @@
     }
     paintAll();
     UI.openSheet('entrySheet');
-    setTimeout(function () {
-      var scroller = sheet.querySelector('.cat-scroll');
-      if (!scroller) return;
-      var sel = scroller.querySelector('.cat-item.selected');
-      scroller.scrollTop = 0;
-      if (!sel) return;
-      var top = sel.offsetTop - scroller.clientHeight / 2 + sel.offsetHeight / 2;
-      var maxTop = scroller.scrollHeight - scroller.clientHeight;
-      scroller.scrollTop = Math.max(0, Math.min(top, maxTop));
-    }, 60);
+    var scroller = sheet.querySelector('.cat-scroll');
+    if (scroller) scroller.scrollTop = 0;
+    if (record) {
+      // 等弹层动画结束再滚动，否则量到的可视高度不准
+      setTimeout(function () {
+        if (!scroller) return;
+        var sel = scroller.querySelector('.cat-item.selected');
+        if (!sel) return;
+        var sr = scroller.getBoundingClientRect();
+        var ir = sel.getBoundingClientRect();
+        var delta = ir.top + ir.height / 2 - (sr.top + sr.height / 2);
+        scroller.scrollTop = Math.max(0, scroller.scrollTop + delta);
+      }, 340);
+    }
   }
 
   function close() {

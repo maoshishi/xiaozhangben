@@ -83,7 +83,7 @@
       '<div class="ai-row"><span class="ai-row-label">备注</span><input class="ai-note-input" id="aiNote" maxlength="24" value="' +
       UI.escapeHtml(cur.note || '') +
       '" placeholder="补充一点备注" /></div>' +
-      (hint ? '<div class="ai-meta"><span class="ai-tag">提示</span>' + hint + '</div>' : '') +
+      (hint ? '<div class="ai-warn"><span class="ai-warn-ic">!</span>' + hint + '</div>' : '') +
       '<div class="ai-actions">' +
       '<button class="btn-ghost" data-act="cancel">再看看</button>' +
       '<button class="btn-primary" data-act="confirm">确认录入</button>' +
