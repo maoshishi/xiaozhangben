@@ -392,7 +392,7 @@
       })
       .join('');
 
-    /* 外侧百分比标签（≥4.5% 才标注，左右分列 + 简单防重叠） */
+    /* 外侧标签：分类名 + 百分比（≥4.5% 才标注，左右分列 + 简单防重叠） */
     var labs = [];
     items.forEach(function (it) {
       if (it.pct < 0.045) return;
@@ -410,9 +410,9 @@
       }).sort(function (a, b) {
         return a.y - b.y;
       });
-      var minY = 16, maxY = DB.H - 16;
+      var minY = 20, maxY = DB.H - 20;
       for (var i = 1; i < arr.length; i++) {
-        if (arr[i].y - arr[i - 1].y < 15) arr[i].y = arr[i - 1].y + 15;
+        if (arr[i].y - arr[i - 1].y < 33) arr[i].y = arr[i - 1].y + 33;
       }
       if (arr.length) {
         var over = arr[arr.length - 1].y - maxY;
@@ -429,15 +429,19 @@
         var p1y = DB.cy + Math.sin(l.mid) * (DB.r + DB.sw / 2 + 2);
         var ex = DB.cx + l.side * 101;
         var tx = DB.cx + l.side * 107;
+        var anchor = l.side > 0 ? 'start' : 'end';
         var fade = state.selCat && !isSel ? ' opacity="0.4"' : '';
         return (
           '<g class="dn-label" data-cat="' + it.cat + '"' + fade + '>' +
           '<polyline points="' + p1x.toFixed(1) + ',' + p1y.toFixed(1) + ' ' + ex + ',' + l.y.toFixed(1) + ' ' +
           (ex + l.side * 7) + ',' + l.y.toFixed(1) + '" fill="none" stroke="' +
           (isSel ? it.color : '#e2def2') + '" stroke-width="' + (isSel ? 1.4 : 1) + '" stroke-linecap="round"/>' +
-          '<text x="' + tx + '" y="' + (l.y + 0.5).toFixed(1) + '" text-anchor="' + (l.side > 0 ? 'start' : 'end') +
-          '" font-size="10.2" fill="' + (isSel ? '#5b5675' : '#948fa9') + '"' +
-          (isSel ? ' font-weight="600"' : '') + '>' + (it.pct * 100).toFixed(1) + '%</text>' +
+          '<text x="' + tx + '" y="' + (l.y - 4.5).toFixed(1) + '" text-anchor="' + anchor +
+          '" font-size="10.2" font-weight="' + (isSel ? '700' : '600') + '" fill="' +
+          (isSel ? '#4a4566' : '#7d7893') + '">' + esc(it.name) + '</text>' +
+          '<text x="' + tx + '" y="' + (l.y + 8).toFixed(1) + '" text-anchor="' + anchor +
+          '" font-size="9.8" fill="' + (isSel ? '#6f6a8a' : '#a9a4bd') + '">' +
+          (it.pct * 100).toFixed(1) + '%</text>' +
           '</g>'
         );
       })

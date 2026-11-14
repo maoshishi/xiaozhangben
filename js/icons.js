@@ -48,6 +48,40 @@
     add:
       '<circle cx="12" cy="12" r="8.6"/><path d="M12 8.2v7.6M8.2 12h7.6"/>',
 
+    /* 自定义分类可选图标 */
+    coffee:
+      '<path d="M4.2 8.6h12v6.2a4.6 4.6 0 0 1-4.6 4.6H8.8a4.6 4.6 0 0 1-4.6-4.6z"/><path d="M16.2 10.4h1.8a2.6 2.6 0 0 1 0 5.2h-1.8"/><path d="M4.6 21.4h13.4"/>',
+    cake:
+      '<path d="M4 20.4h16v-6.2a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"/><path d="M4 16.6c1.6 1.4 3.2 1.4 4.8 0s3.2-1.4 4.8 0 3.2 1.4 4.8 0"/><path d="M12 12.2V8.6"/><circle cx="12" cy="6.8" r="1"/>',
+    basket:
+      '<path d="M3.6 9.4h16.8l-1.8 9.2a2.2 2.2 0 0 1-2.2 1.8H7.6a2.2 2.2 0 0 1-2.2-1.8z"/><path d="M8.4 9.4 10.6 3.6M15.6 9.4 13.4 3.6"/>',
+    pill:
+      '<g transform="rotate(-40 12 12)"><rect x="2.6" y="8.2" width="18.8" height="7.6" rx="3.8"/><path d="M12 8.2v7.6"/></g>',
+    gym:
+      '<path d="M4 9.4v5.2M7.4 7.4v9.2M16.6 7.4v9.2M20 9.4v5.2M7.4 12h9.2"/>',
+    music:
+      '<circle cx="7" cy="17.4" r="2.4"/><circle cx="17.4" cy="15.4" r="2.4"/><path d="M9.4 17.4V7.6l10.4-2v9.8"/>',
+    car:
+      '<path d="M3.8 16.6v-3.4l1.9-4.8a2 2 0 0 1 1.9-1.3h8.8a2 2 0 0 1 1.9 1.3l1.9 4.8v3.4"/><path d="M3.8 16.6h16.4"/><circle cx="7.6" cy="17.8" r="1.8"/><circle cx="16.4" cy="17.8" r="1.8"/>',
+    gift:
+      '<rect x="3.4" y="9.2" width="17.2" height="11.2" rx="2"/><path d="M3.4 13.4h17.2M12 9.2v11.2"/><path d="M12 9.2S9.8 4 7.6 5s1 4.2 4.4 4.2zM12 9.2s2.2-5.2 4.4-4.2-1 4.2-4.4 4.2z"/>',
+    phone:
+      '<rect x="6.6" y="2.6" width="10.8" height="18.8" rx="2.6"/><path d="M10.8 18.6h2.4"/>',
+    camera:
+      '<rect x="3" y="7.8" width="18" height="12.2" rx="2.4"/><circle cx="12" cy="13.9" r="3.4"/><path d="M8.6 7.8 9.8 5.6h4.4l1.2 2.2"/>',
+    wallet:
+      '<path d="M4 7.6h13.8a2.2 2.2 0 0 1 2.2 2.2v8a2.2 2.2 0 0 1-2.2 2.2H5.8A2.2 2.2 0 0 1 3.6 17.8V6.4a2 2 0 0 1 2-2h10.2"/><path d="M20.2 11.6h-3.6a2.1 2.1 0 0 0 0 4.2h3.6"/>',
+    star:
+      '<path d="M12 3.8l2.4 5.1 5.6.8-4.1 3.9 1 5.6L12 16.6l-4.9 2.6 1-5.6-4.1-3.9 5.6-.8z"/>',
+    heart:
+      '<path d="M12 20.2S3.8 15.4 3.8 9.8a4.3 4.3 0 0 1 8.2-2 4.3 4.3 0 0 1 8.2 2c0 5.6-8.2 10.4-8.2 10.4z"/>',
+    ticket:
+      '<path d="M3.8 8.4h16.4v2.2a1.6 1.6 0 0 0 0 3.2v2.2H3.8v-2.2a1.6 1.6 0 0 0 0-3.2z"/><path d="M9.2 8.4v7.6" stroke-dasharray="2 2.4"/>',
+    award:
+      '<circle cx="12" cy="14.6" r="4.4"/><path d="M9.2 10.8 7.6 3.6h8.8l-1.6 7.2"/><path d="M12 12.6v4"/>',
+    plant:
+      '<path d="M12 20.6v-6"/><path d="M12 14.6c0-3.6 2.6-6.2 6.2-6.2 0 3.6-2.6 6.2-6.2 6.2z"/><path d="M12 14.6C12 11 9.4 8.4 5.8 8.4c0 3.6 2.6 6.2 6.2 6.2z"/>',
+
     /* 收入分类 */
     salary:
       '<path d="M3.4 20.4h17.2"/><path d="M5.6 20.4V9.8M18.4 20.4V9.8"/><path d="M3.4 9.8h17.2L12 3.6z"/><path d="M9.4 20.4v-4.6h5.2v4.6"/>',
@@ -102,11 +136,84 @@
     { id: 'otherIn', name: '其他', color: '#a5a2b8' }
   ];
 
-  var CATS = { expense: EXPENSE, income: INCOME };
+  /* 自定义分类可选图标 */
+  var PICKER = [
+    'food',
+    'coffee',
+    'cake',
+    'basket',
+    'shop',
+    'outfit',
+    'beauty',
+    'daily',
+    'medical',
+    'pill',
+    'gym',
+    'fun',
+    'music',
+    'study',
+    'pet',
+    'plant',
+    'family',
+    'traffic',
+    'car',
+    'travel',
+    'rent',
+    'express',
+    'social',
+    'gift',
+    'phone',
+    'camera',
+    'wallet',
+    'finance',
+    'invest',
+    'star',
+    'heart',
+    'ticket',
+    'award',
+    'other'
+  ];
+
+  /* 自定义分类自动取色（低饱和） */
+  var CUSTOM_COLORS = [
+    '#a99af3',
+    '#8fcbf2',
+    '#8fd6c2',
+    '#f2bda6',
+    '#ecabc2',
+    '#b9d89e',
+    '#eed7a0',
+    '#c1aade',
+    '#dcaaa4',
+    '#9fc6cf'
+  ];
+
+  var CATS = { expense: EXPENSE.slice(), income: INCOME.slice() };
   var ALL = {};
   EXPENSE.concat(INCOME).forEach(function (c) {
     ALL[c.id] = c;
   });
+
+  /** 内置 + 自定义，重建分类表（自定义的插在「其他」前面） */
+  function refresh() {
+    var custom = window.Store && Store.categories ? Store.categories() : [];
+    var ex = EXPENSE.slice();
+    var inc = INCOME.slice();
+    ALL = {};
+    EXPENSE.concat(INCOME).forEach(function (c) {
+      ALL[c.id] = c;
+    });
+    custom.forEach(function (c) {
+      var item = { id: c.id, name: c.name, color: c.color, icon: c.icon, custom: true };
+      ALL[c.id] = item;
+      var list = c.type === 'income' ? inc : ex;
+      var idx = list.length - 1; // 放在「其他」前面
+      list.splice(idx < 0 ? list.length : idx, 0, item);
+    });
+    CATS.expense = ex;
+    CATS.income = inc;
+    window.CATS = CATS;
+  }
 
   function svg(name) {
     var body = P[name] || P.other;
@@ -124,7 +231,7 @@
       '1f;color:' +
       c.color +
       '">' +
-      svg(c.id) +
+      svg(c.icon || c.id) +
       '</span>'
     );
   }
@@ -133,6 +240,26 @@
     return ALL[catId] || ALL.other;
   }
 
-  window.Icons = { svg: svg, chip: chip, get: get };
+  function list(type) {
+    return (CATS[type] || []).slice();
+  }
+
+  function picker() {
+    return PICKER.slice();
+  }
+
+  function colorFor(i) {
+    return CUSTOM_COLORS[i % CUSTOM_COLORS.length];
+  }
+
+  window.Icons = {
+    svg: svg,
+    chip: chip,
+    get: get,
+    list: list,
+    picker: picker,
+    colorFor: colorFor,
+    refresh: refresh
+  };
   window.CATS = CATS;
 })();

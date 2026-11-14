@@ -188,6 +188,7 @@
     reader.onload = function () {
       try {
         var n = Store.importJSON(String(reader.result));
+        if (window.Icons && Icons.refresh) Icons.refresh();
         refreshAll();
         UI.toast(n ? '已导入 ' + n + ' 笔' : '没有新记录', 'ok');
       } catch (err) {

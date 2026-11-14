@@ -29,6 +29,7 @@
     return {
       version: 1,
       records: [],
+      categories: [],
       settings: {
         ai: { endpoint: '', model: '', apiKey: '' },
         createdAt: Date.now()
@@ -55,6 +56,14 @@
     if (!db || !Array.isArray(db.records)) db = blank();
     if (!db.settings) db.settings = blank().settings;
     if (!db.settings.ai) db.settings.ai = blank().settings.ai;
+    if (!Array.isArray(db.categories)) db.categories = [];
+    db.categories.forEach(function (c) {
+      if (!c.id) c.id = 'c' + uid();
+      c.name = String(c.name || '').slice(0, 4);
+      if (c.type !== 'income') c.type = 'expense';
+      if (!c.icon) c.icon = 'other';
+      if (!c.color) c.color = '#a99af3';
+    });
     db.records.forEach(function (r) {
       if (!r.id) r.id = uid();
       r.amount = Number(r.amount) || 0;
@@ -204,6 +213,41 @@
       return db.records.length;
     },
 
+    /* ---------- 自定义分类 ---------- */
+    categories: function (type) {
+      var list = db.categories || [];
+      return type
+        ? list.filter(function (c) {
+            return c.type === type;
+          })
+        : list.slice();
+    },
+
+    addCategory: function (cat) {
+      db.categories = db.categories || [];
+      var c = {
+        id: 'c' + uid(),
+        type: cat.type === 'income' ? 'income' : 'expense',
+        name: String(cat.name || '').trim().slice(0, 4),
+        icon: cat.icon || 'other',
+        color: cat.color || '#a99af3',
+        createdAt: Date.now()
+      };
+      db.categories.push(c);
+      persist();
+      return c;
+    },
+
+    removeCategory: function (id) {
+      var i = (db.categories || []).findIndex(function (c) {
+        return c.id === id;
+      });
+      if (i >= 0) {
+        db.categories.splice(i, 1);
+        persist();
+      }
+    },
+
     /* 备份 */
     exportJSON: function () {
       return JSON.stringify(db, null, 2);
@@ -213,11 +257,31 @@
       var incoming = JSON.parse(text);
       var list = Array.isArray(incoming) ? incoming : incoming.records;
       if (!Array.isArray(list)) throw new Error('文件格式不正确');
+      var added = 0;
+
+      // 顺带恢复自定义分类
+      var cats = Array.isArray(incoming.categories) ? incoming.categories : [];
+      db.categories = db.categories || [];
+      cats.forEach(function (c) {
+        if (!c || !c.name) return;
+        var dup = db.categories.some(function (x) {
+          return x.id === c.id || (x.name === c.name && x.type === c.type);
+        });
+        if (dup) return;
+        db.categories.push({
+          id: c.id || 'c' + uid(),
+          type: c.type === 'income' ? 'income' : 'expense',
+          name: String(c.name).slice(0, 4),
+          icon: c.icon || 'other',
+          color: c.color || '#a99af3',
+          createdAt: c.createdAt || Date.now()
+        });
+      });
+
       var exists = {};
       db.records.forEach(function (r) {
         exists[r.id] = 1;
       });
-      var added = 0;
       list.forEach(function (r) {
         if (!r || !r.date || !r.amount) return;
         var id = r.id || uid();
@@ -316,4 +380,7 @@
   };
 
   window.Store = Store.init();
+
+  // 分类表依赖 Store 里的自定义分类，这里重建一次
+  if (window.Icons && Icons.refresh) Icons.refresh();
 })();

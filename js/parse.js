@@ -128,6 +128,19 @@
   }
 
   function detectCat(text, type) {
+    // 自定义分类：名字直接出现在句子里，优先级最高（取最长的那个）
+    var custom =
+      window.Store && Store.categories
+        ? Store.categories(type === 'income' ? 'income' : 'expense')
+        : [];
+    var hit = null;
+    custom.forEach(function (c) {
+      if (c.name && text.indexOf(c.name) >= 0) {
+        if (!hit || c.name.length > hit.name.length) hit = c;
+      }
+    });
+    if (hit) return { cat: hit.id, matched: true, word: hit.name };
+
     var words = CAT_WORDS[type === 'income' ? 'income' : 'expense'];
     var best = null, bestId = '';
     Object.keys(words).forEach(function (id) {

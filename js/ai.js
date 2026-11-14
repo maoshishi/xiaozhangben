@@ -32,7 +32,7 @@
           '22;color:' +
           c.color +
           '">' +
-          Icons.svg(c.id) +
+          Icons.svg(c.icon || c.id) +
           '</span>' +
           c.name +
           '</button>'

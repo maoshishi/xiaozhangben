@@ -230,7 +230,7 @@
     if (!b) return;
     var id = b.getAttribute('data-cat');
     if (id === '__add') {
-      UI.toast('自定义分类下一版支持 🙌');
+      if (window.CatSheet) CatSheet.open(state.type);
       return;
     }
     state.cat = id;
@@ -329,5 +329,24 @@
     }
   }
 
-  window.Entry = { open: open, close: close, state: state };
+  window.Entry = {
+    open: open,
+    close: close,
+    state: state,
+    /* 新增分类后刷新九宫格并选中它 */
+    refreshCats: function (selectId) {
+      if (selectId) state.cat = selectId;
+      paintCats();
+      var scroller = sheet.querySelector('.cat-scroll');
+      var sel = catGrid.querySelector('.cat-item.selected');
+      if (scroller && sel) {
+        setTimeout(function () {
+          var sr = scroller.getBoundingClientRect();
+          var ir = sel.getBoundingClientRect();
+          var delta = ir.top + ir.height / 2 - (sr.top + sr.height / 2);
+          scroller.scrollTop = Math.max(0, scroller.scrollTop + delta);
+        }, 60);
+      }
+    }
+  };
 })();
