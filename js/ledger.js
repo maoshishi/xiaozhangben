@@ -12,6 +12,8 @@
   var elToday = document.getElementById('sumToday');
   var elExp = document.getElementById('sumMonthExp');
   var elInc = document.getElementById('sumMonthInc');
+  var elTodayBudget = document.getElementById('sumTodayBudget');
+  var elMonthBudget = document.getElementById('sumMonthBudget');
 
   function groupByDate(list) {
     var map = {};
@@ -27,6 +29,54 @@
     return order.map(function (d) {
       return { date: d, items: map[d] };
     });
+  }
+
+  /* 检讨书行（排在当天所有记录前面） */
+  function pledgeRow(p) {
+    var sub = p.time || '';
+    var over = [];
+    if (p.overDay > 0) over.push('今日超 ' + UI.money(p.overDay));
+    if (p.overMonth > 0) over.push('本月超 ' + UI.money(p.overMonth));
+    sub += (sub ? ' | ' : '') + (over.join(' · ') || '超支检讨');
+    if (p.note) sub += ' · ' + p.note;
+
+    return (
+      '<div class="rec pledge" data-pledge="' +
+      p.id +
+      '">' +
+      '<span class="pledge-thumb"><img src="' +
+      p.image +
+      '" alt="检讨书" loading="lazy"/></span>' +
+      '<div class="rec-main">' +
+      '<div class="rec-top"><span class="rec-cat">检讨书</span>' +
+      '<span class="rec-badge warn">超支</span></div>' +
+      '<div class="rec-sub">' +
+      UI.escapeHtml(sub) +
+      '</div>' +
+      '</div>' +
+      '<span class="pledge-more">查看</span>' +
+      '</div>'
+    );
+  }
+
+  /* 汇总下面的预算小字 */
+  function paintBudget(todayExp, monthExp) {
+    var b = Store.budget();
+
+    function put(el, spent, limit) {
+      if (!el) return;
+      if (!b.enabled || !(limit > 0) || !window.Budget) {
+        el.textContent = '';
+        el.className = 'sum-budget';
+        return;
+      }
+      var l = Budget.label(spent, limit);
+      el.textContent = l ? l.text : '';
+      el.className = 'sum-budget' + (l && l.cls ? ' ' + l.cls : '');
+    }
+
+    put(elTodayBudget, todayExp, b.daily);
+    put(elMonthBudget, monthExp, b.monthly);
   }
 
   function rowHtml(r) {
@@ -78,9 +128,11 @@
       : '本月还没有记录，点下面 ＋ 记一笔';
 
     var todayStr = Store.today();
-    elToday.textContent = UI.money(Store.total(Store.byDate(todayStr), 'expense'));
+    var todayExp = Store.total(Store.byDate(todayStr), 'expense');
+    elToday.textContent = UI.money(todayExp);
     elExp.textContent = UI.money(expSum);
     elInc.textContent = UI.money(incSum);
+    paintBudget(todayExp, expSum);
 
     if (!list.length) {
       elList.innerHTML =
@@ -132,6 +184,7 @@
         '</div>' +
         '</div>' +
         '<div class="day-head-divider"></div>' +
+        Store.pledges(g.date).map(pledgeRow).join('') +
         g.items.map(rowHtml).join('') +
         '</div>';
     });
@@ -166,6 +219,11 @@
 
   /* 点击记录 */
   elList.addEventListener('click', function (e) {
+    var pl = e.target.closest('.pledge');
+    if (pl) {
+      if (window.Budget) Budget.openViewer(pl.getAttribute('data-pledge'));
+      return;
+    }
     var row = e.target.closest('.rec');
     if (!row) return;
     App.openRecordActions(row.getAttribute('data-id'));

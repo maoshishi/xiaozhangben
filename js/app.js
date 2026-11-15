@@ -6,6 +6,7 @@
 
   /* ---------------- 导航 ---------------- */
   function switchTab(name) {
+    if (window.Budget && Budget.locked()) return;
     document.querySelectorAll('.page').forEach(function (p) {
       p.classList.toggle('active', p.getAttribute('data-page') === name);
     });
@@ -30,9 +31,11 @@
 
   /* ---------------- 打开记一笔 / 智能记账 ---------------- */
   document.getElementById('btnAdd').addEventListener('click', function () {
+    if (window.Budget && Budget.locked()) return;
     Entry.open();
   });
   document.getElementById('btnAi').addEventListener('click', function () {
+    if (window.Budget && Budget.locked()) return;
     Ai.open();
   });
 
@@ -41,6 +44,7 @@
     Ledger.render();
     document.getElementById('settingsSub').textContent = '共 ' + Store.count() + ' 笔记录';
     if (window.Report) Report.render();
+    if (window.Budget) Budget.check();
   }
 
   /* ---------------- 记录操作 ---------------- */
@@ -132,6 +136,7 @@
   }
 
   document.getElementById('btnSearch').addEventListener('click', function () {
+    if (window.Budget && Budget.locked()) return;
     searchInput.value = '';
     doSearch();
     UI.openSheet('searchSheet');

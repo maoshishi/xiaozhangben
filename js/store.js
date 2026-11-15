@@ -30,6 +30,8 @@
       version: 1,
       records: [],
       categories: [],
+      budget: { enabled: false, daily: 0, monthly: 0, updatedAt: 0 },
+      pledges: [],
       settings: {
         ai: { endpoint: '', model: '', apiKey: '' },
         createdAt: Date.now()
@@ -63,6 +65,21 @@
       if (c.type !== 'income') c.type = 'expense';
       if (!c.icon) c.icon = 'other';
       if (!c.color) c.color = '#a99af3';
+    });
+
+    /* 预算 + 检讨书 */
+    if (!db.budget || typeof db.budget !== 'object') {
+      db.budget = { enabled: false, daily: 0, monthly: 0, updatedAt: 0 };
+    }
+    db.budget.enabled = !!db.budget.enabled;
+    db.budget.daily = Math.max(0, Number(db.budget.daily) || 0);
+    db.budget.monthly = Math.max(0, Number(db.budget.monthly) || 0);
+    if (!Array.isArray(db.pledges)) db.pledges = [];
+    db.pledges.forEach(function (p) {
+      if (!p.id) p.id = 'p' + uid();
+      if (!p.date) p.date = today();
+      if (!p.time) p.time = '12:00';
+      if (!Array.isArray(p.scope) || !p.scope.length) p.scope = ['day'];
     });
     db.records.forEach(function (r) {
       if (!r.id) r.id = uid();
@@ -142,6 +159,76 @@
         db.records.splice(i, 1);
         persist();
       }
+    },
+
+    /* ---------- 预算 ---------- */
+    budget: function () {
+      var b = db.budget || {};
+      return {
+        enabled: !!b.enabled,
+        daily: Math.max(0, Number(b.daily) || 0),
+        monthly: Math.max(0, Number(b.monthly) || 0)
+      };
+    },
+
+    setBudget: function (b) {
+      db.budget = {
+        enabled: !!b.enabled,
+        daily: Math.max(0, Math.round((Number(b.daily) || 0) * 100) / 100),
+        monthly: Math.max(0, Math.round((Number(b.monthly) || 0) * 100) / 100),
+        updatedAt: Date.now()
+      };
+      persist();
+      return db.budget;
+    },
+
+    /* ---------- 检讨书 ---------- */
+    pledges: function (date) {
+      var list = db.pledges || [];
+      return (date
+        ? list.filter(function (p) {
+            return p.date === date;
+          })
+        : list.slice()
+      ).sort(function (a, b) {
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+    },
+
+    addPledge: function (p) {
+      db.pledges = db.pledges || [];
+      var item = {
+        id: 'p' + uid(),
+        date: p.date || today(),
+        time: p.time || hm(new Date()),
+        image: p.image || '',
+        w: p.w || 0,
+        h: p.h || 0,
+        note: String(p.note || '').slice(0, 60),
+        scope: Array.isArray(p.scope) && p.scope.length ? p.scope : ['day'],
+        overDay: Math.round((Number(p.overDay) || 0) * 100) / 100,
+        overMonth: Math.round((Number(p.overMonth) || 0) * 100) / 100,
+        createdAt: Date.now()
+      };
+      db.pledges.push(item);
+      persist();
+      return item;
+    },
+
+    removePledge: function (id) {
+      var i = (db.pledges || []).findIndex(function (p) {
+        return p.id === id;
+      });
+      if (i >= 0) {
+        db.pledges.splice(i, 1);
+        persist();
+      }
+    },
+
+    getPledge: function (id) {
+      return (db.pledges || []).filter(function (p) {
+        return p.id === id;
+      })[0] || null;
     },
 
     /* 某月（y 为 4 位年份，m 为 0-11） */
@@ -275,6 +362,37 @@
           icon: c.icon || 'other',
           color: c.color || '#a99af3',
           createdAt: c.createdAt || Date.now()
+        });
+      });
+
+      // 顺带恢复预算设置（本机没开通过才采用备份里的）
+      if (incoming.budget && typeof incoming.budget === 'object' && !(db.budget && db.budget.enabled)) {
+        db.budget = {
+          enabled: !!incoming.budget.enabled,
+          daily: Math.max(0, Number(incoming.budget.daily) || 0),
+          monthly: Math.max(0, Number(incoming.budget.monthly) || 0),
+          updatedAt: Date.now()
+        };
+      }
+
+      // 检讨书按 id 去重合并
+      var plist = Array.isArray(incoming.pledges) ? incoming.pledges : [];
+      db.pledges = db.pledges || [];
+      plist.forEach(function (p) {
+        if (!p || !p.date || !p.image) return;
+        if (db.pledges.some(function (x) { return x.id === p.id; })) return;
+        db.pledges.push({
+          id: p.id || 'p' + uid(),
+          date: p.date,
+          time: p.time || '12:00',
+          image: p.image,
+          w: p.w || 0,
+          h: p.h || 0,
+          note: String(p.note || '').slice(0, 60),
+          scope: Array.isArray(p.scope) && p.scope.length ? p.scope : ['day'],
+          overDay: Number(p.overDay) || 0,
+          overMonth: Number(p.overMonth) || 0,
+          createdAt: p.createdAt || Date.now()
         });
       });
 

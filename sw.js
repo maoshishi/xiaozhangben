@@ -1,6 +1,6 @@
 /* 小账本 · Service Worker
    策略：网络优先（拿到最新的就更新缓存），断网时用缓存 */
-var CACHE = 'xiaozhangben-v8';
+var CACHE = 'xiaozhangben-v11';
 var ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,8 @@ var ASSETS = [
   './js/ui.js',
   './js/ledger.js',
   './js/entry.js',
+  './js/cat.js',
+  './js/budget.js',
   './js/ai.js',
   './js/report.js',
   './js/app.js',
